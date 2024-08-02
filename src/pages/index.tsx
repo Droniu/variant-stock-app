@@ -3,6 +3,9 @@ import { Box, Button, Input, Text } from "@saleor/macaw-ui";
 import { NextPage } from "next";
 import Link from "next/link";
 import { MouseEventHandler, useEffect, useState } from "react";
+import { isInIframe } from "../lib/is-in-iframe";
+import { useRouter } from "next/router";
+import { useIsMounted } from "usehooks-ts";
 
 const AddToSaleorForm = () => (
   <Box
@@ -33,12 +36,19 @@ const AddToSaleorForm = () => (
  * You should probably remove it.
  */
 const IndexPage: NextPage = () => {
+  const isMounted = useIsMounted();
+  const { replace } = useRouter();
   const { appBridgeState, appBridge } = useAppBridge();
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    if (isMounted() && appBridgeState?.ready) {
+      replace("/app/variants");
+    }
+  }, [isMounted, appBridgeState?.ready, replace]);
+
+  if (isInIframe()) {
+    return <span>Loading...</span>;
+  }
 
   const handleLinkClick: MouseEventHandler<HTMLAnchorElement> = (e) => {
     /**
@@ -69,7 +79,7 @@ const IndexPage: NextPage = () => {
         Saleor App Template is a minimalistic boilerplate that provides a working example of a
         Saleor app.
       </Text>
-      {appBridgeState?.ready && mounted && (
+      {appBridgeState?.ready && isMounted() && (
         <Link href="/actions">
           <Button variant="secondary">See what your app can do →</Button>
         </Link>
@@ -193,7 +203,7 @@ const IndexPage: NextPage = () => {
         </li>
       </ul>
 
-      {mounted && !isLocalHost && !appBridgeState?.ready && (
+      {isMounted() && !isLocalHost && !appBridgeState?.ready && (
         <>
           <Text marginBottom={4} as={"p"}>
             Install this app in your Dashboard and get extra powers!

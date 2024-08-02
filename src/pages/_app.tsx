@@ -32,7 +32,7 @@ function NextApp({ Component, pageProps }: AppProps) {
     <NoSSRWrapper>
       <AppBridgeProvider appBridgeInstance={appBridgeInstance}>
         <GraphQLProvider>
-          <ThemeProvider >
+          <ThemeProvider>
             <ThemeSynchronizer />
             <RoutePropagator />
             <Component {...pageProps} />

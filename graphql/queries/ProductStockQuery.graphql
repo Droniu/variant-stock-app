@@ -1,0 +1,36 @@
+query ProductStockQuery($first: Int!, $after: String, $where: ProductWhereInput, $channel: String) {
+  products(first: $first, after: $after, where: $where, channel: $channel) {
+    edges {
+      node {
+        id
+        name
+        thumbnail {
+          url
+          alt
+        }
+        variants {
+          id
+          name
+          sku
+          media {
+            id
+            url
+            alt
+          }
+          stocks {
+            id
+            warehouse {
+              id
+              name
+            }
+            quantity
+          }
+        }
+      }
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}
